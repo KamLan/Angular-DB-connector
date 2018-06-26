@@ -3,11 +3,13 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
+import { MysqlComponent } from './mysql/mysql.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MysqlComponent
   ],
   imports: [
     BrowserModule

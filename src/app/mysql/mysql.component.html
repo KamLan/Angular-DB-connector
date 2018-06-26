@@ -1,0 +1,31 @@
+<h3>
+  Connection to mysql database
+</h3>
+<div class="container">
+  <div class="col-md-12">
+    <form>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Server ip address</label>
+        <input type="text" #ipServer class="form-control" id="serveripaddress" value="0.0.0.0">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Server port</label>
+        <input type="number" #portServer class="form-control" id="serverport" value="32770">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">User</label>
+        <input type="text" #userServer class="form-control" id="serveripaddress" value="root" >
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">Password</label>
+        <input type="password" #pwServer class="form-control" id="serveripaddress" value="secret">
+      </div>
+      <a 
+        class="btn btn-primary" 
+        (click)="connect(ipServer.value, portServer.value, userServer.value, pwServer.value)">
+        Connect
+      </a>
+    </form>
+  </div>
+</div>
+
