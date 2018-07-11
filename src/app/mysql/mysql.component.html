@@ -6,23 +6,27 @@
     <form>
       <div class="form-group">
         <label for="exampleInputEmail1">Server ip address</label>
-        <input type="text" #ipServer class="form-control" id="serveripaddress" value="0.0.0.0">
+        <input type="text" #ipServer class="form-control" id="serveripaddress" value="172.17.0.2">
       </div>
       <div class="form-group">
         <label for="exampleInputPassword1">Server port</label>
-        <input type="number" #portServer class="form-control" id="serverport" value="32770">
+        <input type="number" #portServer class="form-control" id="serverport" value="3306">
       </div>
       <div class="form-group">
-        <label for="exampleInputEmail1">User</label>
-        <input type="text" #userServer class="form-control" id="serveripaddress" value="root" >
+        <label for="user">User</label>
+        <input type="text" #userServer class="form-control" value="root" >
       </div>
       <div class="form-group">
-        <label for="exampleInputEmail1">Password</label>
-        <input type="password" #pwServer class="form-control" id="serveripaddress" value="secret">
+        <label for="pw">Password</label>
+        <input type="password" #pwServer class="form-control" value="secret">
+      </div>
+      <div class="form-group">
+        <label for="sql">Requête SQL</label>
+        <input type="text" #sql class="form-control" value="select * from employees order by emp_no asc limit 20;">
       </div>
       <a 
         class="btn btn-primary" 
-        (click)="connect(ipServer.value, portServer.value, userServer.value, pwServer.value)">
+        (click)="connect(ipServer.value, portServer.value, userServer.value, pwServer.value, sql.value)">
         Connect
       </a>
     </form>
