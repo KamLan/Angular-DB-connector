@@ -31,5 +31,20 @@
       </a>
     </form>
   </div>
+  <div *ngIf="connected==1">
+    <h3>Resultat de la requête</h3>
+      <table>
+        <tr>
+          <th *ngFor="let column of columns">
+            {{column}}
+          </th>
+        </tr>
+        <tr *ngFor="let data of datas; let i = index">
+            <td *ngFor="let column of columns; let j = index">
+              {{arrayParams[i][j]}}
+            </td>
+        </tr>
+      </table>
+  </div>
 </div>
 

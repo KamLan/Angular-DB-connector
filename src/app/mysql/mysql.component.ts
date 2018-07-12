@@ -12,7 +12,11 @@ export class MysqlComponent implements OnInit {
   mysqlUrlConnect="0.0.0.0:8080/connect"
   mysqlUrlRequest="0.0.0.0:8080/request"
   body
+  datas
   connected = 0
+  columns = []
+  arrayParams = []
+  param = []
 
   constructor(private http: HttpClient) { }
   
@@ -20,23 +24,40 @@ export class MysqlComponent implements OnInit {
   }
 
   ConnectMysql(){
-    return this.http.get(this.mysqlUrlConnect, this.body)
+    return this.http.post(this.mysqlUrlConnect, this.body)
   }
 
   connect(ipServer, portServer, userServer, pwServer, request){
-    console.log("coucou")
-    var ip:string = ipServer
-    var port:string = portServer
-    var user:string = userServer
-    var pw:string=pwServer
     this.body = {
-      "user": user,
-      "password": pw,
-      "server": ip+":"+port
+      "user": userServer,
+      "password": pwServer,
+      "server": ipServer,
+      "request": request
     }
-    console.log("body: ", this.body)
-    this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+user+"/"+pw+"/"+ip+":"+port+"/"+request
-    console.log(this.ConnectMysql())
+
+    this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"+request
+    this.ConnectMysql().subscribe(datas => {
+      this.datas = datas
+    })
+
+    this.columns=[]
+    this.arrayParams=[]
+
+    //récupération champs requête
+    for(var key in this.datas[0]){
+      this.columns.push(key)
+    }
+
+    //array of array pour display
+    for(var j = 0; j < this.datas.length; j++ ){
+      this.param =[]
+      for(var i = 0; i < this.columns.length; i++){
+        this.param.push(this.datas[j][this.columns[i]])
+      }
+      this.arrayParams.push(this.param)
+    }
+    console.log("params: ",this.arrayParams)
+    this.connected=1
   }
 
 
