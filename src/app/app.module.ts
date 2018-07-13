@@ -4,12 +4,16 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { MysqlComponent } from './mysql/mysql.component';
+import { PostgresqlComponent } from './postgresql/postgresql.component';
+import { MongodbComponent } from './mongodb/mongodb.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    MysqlComponent
+    MysqlComponent,
+    PostgresqlComponent,
+    MongodbComponent
   ],
   imports: [
     BrowserModule,
@@ -18,4 +22,7 @@ import { MysqlComponent } from './mysql/mysql.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+
+ }

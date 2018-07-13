@@ -7,21 +7,15 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">MySQL Server <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="#" (click)="displayBase(1)">MySQL Server <span class="sr-only"></span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">?</a>
+        <a class="nav-link" href="#" (click)="displayBase(2)">PostgreSQL</a>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          ? 
+      <li class="nav-item">
+        <a class="nav-link" (click)="displayBase(3)" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          MongoDB
         </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">?</a>
-          <a class="dropdown-item" href="#"> ?</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">?</a>
-        </div>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled" href="#">?</a>
@@ -38,6 +32,15 @@
     Angular DB connector
   </h1>
 </div>
-<app-mysql></app-mysql>
+<div *ngIf="base==1">
+    <app-mysql></app-mysql>
+</div>
+<div *ngIf="base==2">
+  <app-postgresql></app-postgresql>
+</div>
+<div *ngIf="base==3">
+  <app-mongodb></app-mongodb>
+</div>
+
 
 

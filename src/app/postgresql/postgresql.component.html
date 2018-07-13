@@ -1,0 +1,64 @@
+<h3>
+    Connection to PostgreSQL database
+  </h3>
+  <div class="container">
+    <div class="col-md-12">
+      <form>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Server ip address</label>
+          <input type="text" #ipServer class="form-control" value="172.17.0.3">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Server port</label>
+          <input type="number" #portServer class="form-control" value="5432">
+        </div>
+        <div class="form-group">
+          <label for="user">User</label>
+          <input type="text" #userServer class="form-control" value="postgres" >
+        </div>
+        <div class="form-group">
+          <label for="pw">Password</label>
+          <input type="password" #pwServer class="form-control" value="secret">
+        </div>
+        <div class="form-group">
+            <label for="pw">Database</label>
+            <input type="text" #dbName class="form-control" value="employees">
+        </div>
+        <div class="form-group">
+            <label for="requestType">Type of request</label>
+            <select name="requestType" #requestType>
+              <option value="SELECT">SELECT</option>
+              <option value="UPDATE">UPDATE</option>  
+            </select>
+          </div>
+        <div class="form-group">
+          <label for="sql">Requête SQL</label>
+          <input type="text" #sql class="form-control" value="select * from employees order by emp_no asc limit 20;">
+        </div>
+        <a 
+          class="btn btn-primary" 
+          (click)="connect(ipServer.value, portServer.value, userServer.value, pwServer.value, 
+          dbName.value, requestType.value, sql.value)">
+          Connect
+        </a>
+      </form>
+    </div>
+    <div *ngIf="connected==1">
+      <h3>Resultat de la requête</h3>
+      <h5>{{success}}</h5>
+        <table>
+          <tr>
+            <th *ngFor="let column of columns">
+              {{column}}
+            </th>
+          </tr>
+          <tr *ngFor="let data of datas; let i = index">
+              <td *ngFor="let column of columns; let j = index">
+                {{arrayParams[i][j]}}
+              </td>
+          </tr>
+        </table>
+    </div>
+  </div>
+  
+  

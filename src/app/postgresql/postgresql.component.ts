@@ -2,23 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-mysql',
-  templateUrl: './mysql.component.html',
-  styleUrls: ['./mysql.component.css']
+  selector: 'app-postgresql',
+  templateUrl: './postgresql.component.html',
+  styleUrls: ['./postgresql.component.css']
 })
+export class PostgresqlComponent implements OnInit {
 
-export class MysqlComponent implements OnInit {
-
-  mysqlUrlConnect="0.0.0.0:8080/connect"
-  mysqlUrlRequest="0.0.0.0:8080/request"
+  PostgresUrlConnect="0.0.0.0:8080/connect"
+  PostgreslUrlRequest="0.0.0.0:8080/request"
   body
-  datas:any
+  datas
   connected = 0
   columns = []
   arrayParams = []
   param = []
-  success = ""
-  lastConnexion = []
+  success
 
   constructor(private http: HttpClient) { }
   
@@ -26,29 +24,18 @@ export class MysqlComponent implements OnInit {
   }
 
   ConnectMysql(){
-    return this.http.post(this.mysqlUrlConnect, this.body)
+    return this.http.post(this.PostgresUrlConnect, this.body)
   }
 
-  updateEntry(index){
-    console.log("update trigger")
-    console.log(index)
-    console.log(this.arrayParams[index])
-  }
+  connect(ipServer, portServer, userServer, pwServer, type, request){
+    this.body = {
+      "user": userServer,
+      "password": pwServer,
+      "server": ipServer,
+      "request": request
+    }
 
-  deleteEntry(index){
-    var table = "employees";
-    console.log("delete trigger")
-    console.log(index)
-    console.log(this.arrayParams[index]) 
-    var request = "DELETE FROM "+table+" WHERE id="+this.arrayParams[index][1] 
-    console.log(request)
-  }
-
-  connect(ipServer, portServer, userServer, pwServer, dbName, type, request){
-
-    this.lastConnexion= [ipServer, portServer, userServer, pwServer, dbName, type, request]
-
-    this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"+dbName+"/"+type+"/"+request
+    this.PostgresUrlConnect="http://0.0.0.0:8080/connectPostgres/"+userServer+"/"+pwServer+"/"+ipServer+"/"+type+"/"+request
     this.ConnectMysql().subscribe(datas => {
       this.datas = datas
     })
