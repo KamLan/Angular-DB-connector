@@ -9,10 +9,13 @@ import { HttpClient } from '@angular/common/http';
 
 export class MysqlComponent implements OnInit {
 
-  mysqlUrlConnect="0.0.0.0:8080/connect"
-  mysqlUrlRequest="0.0.0.0:8080/request"
+  mysqlUrlConnect
+  mySQLURLGetId
+  mysqlURLDelete
   body
   datas:any
+  dataInfoTable:any
+  dataDelete:any
   connected = 0
   columns = []
   arrayParams = []
@@ -25,23 +28,67 @@ export class MysqlComponent implements OnInit {
   ngOnInit() {
   }
 
-  ConnectMysql(){
-    return this.http.post(this.mysqlUrlConnect, this.body)
+  ConnectMysqlPost(url){
+    return this.http.post(url, this.body)
   }
 
   updateEntry(index){
     console.log("update trigger")
     console.log(index)
     console.log(this.arrayParams[index])
-  }
+  } 
 
   deleteEntry(index){
-    var table = "employees";
-    console.log("delete trigger")
-    console.log(index)
-    console.log(this.arrayParams[index]) 
-    var request = "DELETE FROM "+table+" WHERE id="+this.arrayParams[index][1] 
-    console.log(request)
+    var db = this.lastConnexion[4]
+    var userServer = this.lastConnexion[2]
+    var pwServer = this.lastConnexion[3]
+    var ipServer = this.lastConnexion[0]
+    var id = this.getTableID()
+    var table = this.getTableName()
+    console.log(table)
+    for(var i = 0; i < this.columns.length; i++){
+      if(this.columns[i]==id){
+        break;
+      }
+    }
+    var idValue = this.arrayParams[index][i]
+    var request = "DELETE FROM "+table+" WHERE "+id+"="+"'"+idValue+"'" 
+
+    this.mysqlURLDelete = "http://0.0.0.0:8080/delete/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+request
+    console.log(this.mysqlURLDelete)
+    this.ConnectMysqlPost(this.mysqlURLDelete).subscribe(dataDelete => {
+      this.dataDelete = dataDelete
+    })
+  }
+
+  getTableName(){
+    var word = "from";
+    var table = this.lastConnexion[6].match(new RegExp(word + '\\s(\\w+)'))[1];
+    return table;
+  }
+
+  getTableID(){
+
+    var table = this.getTableName()
+    var db = this.lastConnexion[4]
+    var userServer = this.lastConnexion[2]
+    var pwServer = this.lastConnexion[3]
+    var ipServer = this.lastConnexion[0]
+
+    this.mySQLURLGetId = "http://0.0.0.0:8080/getId/"+table+"/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer
+
+    this.ConnectMysqlPost(this.mySQLURLGetId).subscribe(dataInfo => {
+      this.dataInfoTable = dataInfo
+    })
+
+    for(var i = 0; i < this.dataInfoTable.length; i++){
+      for(var key in this.dataInfoTable[i]){
+        if(this.dataInfoTable[i].key=="PRI"){
+          var id = this.dataInfoTable[i].field
+        }
+      }
+    }
+    return id;
   }
 
   connect(ipServer, portServer, userServer, pwServer, dbName, type, request){
@@ -49,7 +96,7 @@ export class MysqlComponent implements OnInit {
     this.lastConnexion= [ipServer, portServer, userServer, pwServer, dbName, type, request]
 
     this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"+dbName+"/"+type+"/"+request
-    this.ConnectMysql().subscribe(datas => {
+    this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(datas => {
       this.datas = datas
     })
 
