@@ -102,6 +102,10 @@ export class MysqlComponent implements OnInit {
     }
     for(var i= 0; i < this.insertTypes.length; i++){
       var nameInput = this.insertTypes[i][0]
+      if((document.getElementById(nameInput) as HTMLInputElement).value==""){
+        this.notifier.notify( 'error', 'You need to fill every input' );
+        return;
+      }
       this.arrayDataInsertInput.push((document.getElementById(nameInput) as HTMLInputElement).value)
       insert = insert+"'"+(document.getElementById(nameInput) as HTMLInputElement).value+"',"
       //champs = champs + this.insertTypes[i]
@@ -112,7 +116,7 @@ export class MysqlComponent implements OnInit {
     this.notifier.notify( 'success', 'Insert is a success' );
     console.log(request)
     this.mysqlUrlConnect = "http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"
-    +this.lastConnexion[4]+"/"+"INSERT"+"/"+request
+    +this.lastConnexion[4]+"/"+table+"/"+"INSERT"+"/"+request
 
     this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(dataInsert => {
       this.dataInsert = dataInsert
@@ -158,6 +162,10 @@ export class MysqlComponent implements OnInit {
       }
     }
     for(var i= 1; i < this.insertTypes.length; i++){
+      if((document.getElementById(nameInput) as HTMLInputElement).value==""){
+        this.notifier.notify( 'error', 'You need to fill every input' );
+        return;
+      }
       var nameInput = this.insertTypes[i][0]
       this.arrayDataUpdateInput.push((document.getElementById(nameInput) as HTMLInputElement).value)
       update = update+" "+this.insertTypes[i][0]+" = '"+(document.getElementById(nameInput) as HTMLInputElement).value+"',"
@@ -167,7 +175,7 @@ export class MysqlComponent implements OnInit {
     var request = "UPDATE "+table+" SET "+update+" WHERE "+id+"="+"'"+idValue+"';" 
     console.log(request)
     this.mysqlUrlConnect = "http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"
-    +this.lastConnexion[4]+"/"+"UPDATE"+"/"+request
+    +this.lastConnexion[4]+"/"+table+"/"+"UPDATE"+"/"+request
 
     this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(dataUpdate => {
       this.dataUpdate = dataUpdate
@@ -203,14 +211,32 @@ export class MysqlComponent implements OnInit {
     this.notifier.notify( 'success', 'Delete is a success' );
 
     //refresh
-    this.connect(this.lastConnexion[0], this.lastConnexion[1], this.lastConnexion[2], this.lastConnexion[3], this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6])
+    this.connect(this.lastConnexion[0], this.lastConnexion[1], this.lastConnexion[2], this.lastConnexion[3], 
+      this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6])
   }
 
   //REGEX method to get table name in request
   getTableName(){
-    var word = "from";
-    var table = this.lastConnexion[6].match(new RegExp(word + '\\s(\\w+)'))[1];
-    return table;
+    if(this.lastConnexion[5]=="SELECT"){
+      var word = "from";
+      var table = this.lastConnexion[6].match(new RegExp(word + '\\s(\\w+)'))[1];
+      return table;
+    }
+    if(this.lastConnexion[5]=="UPDATE"){
+      var word = "update";
+      var table = this.lastConnexion[6].match(new RegExp(word + '\\s(\\w+)'))[1];
+      return table;
+    }
+    if(this.lastConnexion[5]=="INSERT"){
+      var word = "into";
+      var table = this.lastConnexion[6].match(new RegExp(word + '\\s(\\w+)'))[1];
+      return table;
+    }
+    else{
+      var word = "from";
+      var table = this.lastConnexion[6].match(new RegExp(word + '\\s(\\w+)'))[1];
+      return table;
+    }
   }
 
   //GET table id method
@@ -249,8 +275,9 @@ export class MysqlComponent implements OnInit {
     this.updateActivated = 0
     this.connected=0
     this.lastConnexion= [ipServer, portServer, userServer, pwServer, dbName, type, request]
+    var table = this.getTableName()
 
-    this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"+dbName+"/"+type+"/"+request
+    this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"+dbName+"/"+table+"/"+type+"/"+request
     this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(datas => {
       this.datas = datas
       this.getData(this.lastConnexion[5])
