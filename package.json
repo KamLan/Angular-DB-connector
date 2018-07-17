@@ -13,6 +13,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^5.2.0",
+    "@angular/cdk": "^6.3.3",
     "@angular/common": "^5.2.0",
     "@angular/compiler": "^5.2.0",
     "@angular/core": "^5.2.0",
@@ -21,6 +22,10 @@
     "@angular/platform-browser": "^5.2.0",
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
+    "angular-notifier": "^4.0.0",
+    "angular-schema-form": "^0.8.13",
+    "angular-ui-notification": "^0.3.6",
+    "angular2-json-schema-form": "^0.7.0-alpha.1",
     "bignumber.js": "^7.2.1",
     "bootstrap": "^4.1.1",
     "core-js": "^2.4.1",

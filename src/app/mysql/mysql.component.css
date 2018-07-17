@@ -1,6 +1,7 @@
 h3{
     text-align:center;
     margin-top:5%;
+    margin-bottom:5%;
 }
 form button{
     text-align:center;
@@ -16,4 +17,8 @@ a.btn-primary:hover{
 }
 td, tr, th{
     text-align: center;
+}
+
+form.insertForm{
+    margin-bottom:5%;
 }

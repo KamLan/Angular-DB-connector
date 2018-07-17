@@ -33,7 +33,7 @@
         </div>
       <div class="form-group">
         <label for="sql">Requête SQL</label>
-        <input type="text" #sql class="form-control" value="select * from employees order by emp_no asc limit 20;">
+        <input type="text" #sql class="form-control" value="select * from employees order by emp_no asc limit 5;">
       </div>
       <a class="btn btn-primary" (click)="connect(ipServer.value, portServer.value, userServer.value, 
         pwServer.value, dbName.value, requestType.value, sql.value)">
@@ -41,13 +41,40 @@
       </a>
     </form>
   </div>
+  <notifier-container></notifier-container>
   <div *ngIf="connected==1">
     <h3>Resultat de la requête</h3>
-    <h5>{{success}}</h5>
+      <div *ngIf="insertActivated==1">
+        <h4>
+          Formulaire d'insertion
+        </h4>
+        <form class="insertForm" name="formI">
+          <div class="form-group" *ngFor="let insertType of insertTypes; let i = index">
+              <label for="">{{insertType[0]}}</label>
+              <input  class="form-control" id="{{insertType[0]}}" [name]="insertType[0]" 
+              [type]="insertType[1]">
+          </div>
+          <a class="btn btn-primary" (click)="insertEntry()" >Insert</a>
+        </form>
+      </div>
+      <div *ngIf="updateActivated==1">
+          <h4>
+            Formulaire d'update
+          </h4>
+          <form class="insertForm" name="formU">
+            <div class="form-group" *ngFor="let insertType of insertTypes; let i = index">
+                <label for="">{{insertType[0]}}</label>
+                <input  class="form-control" id="{{insertType[0]}}" #{{insertType[0]}} 
+                name="{{insertType[0]}}" [type]="insertType[1]" [value]="arrayUpdate[i]">
+            </div>
+            <a class="btn btn-primary" (click)="updateEntry()" >Update</a>
+          </form>
+        </div>
       <table class="table table-dark">
         <tr>
           <th cope="col">
             actions
+            <button type="button" class="btn btn-light" (click)="FormEntry()">INS</button>
           </th>
           <th scope="col">#</th>
           <th scope="col" *ngFor="let column of columns">
@@ -55,13 +82,12 @@
           </th>
         </tr>
         <tr *ngFor="let data of datas; let i = index"> 
-          <button type="button" class="btn btn-light" (click)="updateEntry(i)">+</button>
-          <button type="button" class="btn btn-light" (click)="deleteEntry(i)">-</button>
+          <button type="button" class="btn btn-light" (click)="FormUpdate(i)">UPD</button>
+          <button type="button" class="btn btn-light" (click)="deleteEntry(i)">DEL</button>
           <th scope="row">{{i}}</th>
             <td cope="row" *ngFor="let column of columns; let j = index">
               {{arrayParams[i][j]}}
             </td>
-            
         </tr> 
       </table>
   </div>
