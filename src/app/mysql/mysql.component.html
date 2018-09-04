@@ -1,28 +1,35 @@
 <h3>
-  Connection to mysql database
+  Connection to SQL database
 </h3>
 <div class="container">
   <div class="col-md-12">
     <form>
+        <div class="form-group">
+            <label for="requestType">DBMS</label>
+            <select name="requestType" #dbms>
+              <option value="mysql">MySQL</option>
+              <option value="sqlserver">SQL Server</option>
+            </select>
+        </div>
       <div class="form-group">
-        <label for="exampleInputEmail1">Server ip address</label>
-        <input type="text" #ipServer class="form-control" id="serveripaddress" value="172.17.0.2">
+        <label for="ip">Server ip address</label>
+        <input type="text" #ipServer class="form-control" id="serveripaddress" value="172.17.0.3">
       </div>
       <div class="form-group">
-        <label for="exampleInputPassword1">Server port</label>
-        <input type="number" #portServer class="form-control" id="serverport" value="3306">
+        <label for="port">Server port</label>
+        <input type="number" #portServer class="form-control" id="serverport" value="1433">
       </div>
       <div class="form-group">
         <label for="user">User</label>
-        <input type="text" #userServer class="form-control" value="root" >
+        <input type="text" #userServer class="form-control" value="SA" >
       </div>
       <div class="form-group">
         <label for="pw">Password</label>
-        <input type="password" #pwServer class="form-control" value="secret">
+        <input type="password" #pwServer class="form-control" value="secretPw!1">
       </div>
       <div class="form-group">
-          <label for="pw">Database</label>
-          <input type="text" #dbName class="form-control" value="employees">
+          <label for="db">Database</label>
+          <input type="text" #dbName class="form-control" value="TestDB">
       </div>
       <div class="form-group">
           <label for="requestType">Type of request</label>
@@ -32,12 +39,12 @@
             <option value="DELETE">DELETE</option>   
             <option value="INSERT">INSERT</option> 
           </select>
-        </div>
+      </div>
       <div class="form-group">
         <label for="sql">Requête SQL</label>
-        <input type="text" #sql class="form-control" value="select * from employees order by emp_no asc limit 5;">
+        <input type="text" #sql class="form-control" value="select * from inventory">
       </div>
-      <a class="btn btn-primary" (click)="connect(ipServer.value, portServer.value, userServer.value, 
+      <a class="btn btn-primary" (click)="connect(dbms.value, ipServer.value, portServer.value, userServer.value, 
         pwServer.value, dbName.value, requestType.value, sql.value)">
         Connect
       </a>

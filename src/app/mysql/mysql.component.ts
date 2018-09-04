@@ -55,26 +55,57 @@ export class MysqlComponent implements OnInit {
     return this.http.get(url)
   }
 
+  //Build dynamix form from database info
   getInfoForms(){
     this.insertTypes = []
     var arrayInter = []
+    var dbms = this.lastConnexion[7]
     var id = this.getTableID()
     var table = this.getTableName()
-    for(var i= 0; i < this.dataInfoTable.length; i++){
-      var field = this.dataInfoTable[i].field
-      var type = this.dataInfoTable[i].type
-      if(type.includes("int")){
-        type = "number"
+    if(dbms == 'mysql' ){
+      for(var i= 0; i < this.dataInfoTable.length; i++){
+        var field = this.dataInfoTable[i].field
+        var type = this.dataInfoTable[i].type
+        if(type.includes("int")){
+          type = "number"
+        }
+        if(type.includes("varchar")){
+          type = "text"
+        }
+        if(type.includes("enum")){
+          type = "select"
+        }
+        else{
+          
+        }
+        arrayInter.push(field, type)
+        this.insertTypes.push(arrayInter)
+        arrayInter = []
       }
-      if(type.includes("varchar")){
-        type = "text"
+    }
+    else if(dbms == 'sqlserver'){
+      for(var i= 0; i < this.dataInfoTable.length; i++){
+        var field = this.dataInfoTable[i]['column name']
+        var type = this.dataInfoTable[i]['data type']
+        if(type.includes("int")){
+          type = "number"
+        }
+        if(type.includes("nvarchar")){
+          type = "text"
+        }
+        if(type.includes("enum")){
+          type = "select"
+        }
+        else{
+          
+        }
+        arrayInter.push(field, type)
+        this.insertTypes.push(arrayInter)
+        arrayInter = []
       }
-      if(type.includes("enum")){
-        type = "select"
-      }
-      arrayInter.push(field, type)
-      this.insertTypes.push(arrayInter)
-      arrayInter = []
+    }
+    else{
+
     }
   }
 
@@ -91,6 +122,8 @@ export class MysqlComponent implements OnInit {
     var userServer = this.lastConnexion[2]
     var pwServer = this.lastConnexion[3]
     var ipServer = this.lastConnexion[0]
+    var port = this.lastConnexion[1]
+    var dbms = this.lastConnexion[7]
     var id = this.getTableID()
     var table = this.getTableName() 
     var insert =""
@@ -115,8 +148,8 @@ export class MysqlComponent implements OnInit {
     console.log(insert)
     this.notifier.notify( 'success', 'Insert is a success' );
     console.log(request)
-    this.mysqlUrlConnect = "http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"
-    +this.lastConnexion[4]+"/"+table+"/"+"INSERT"+"/"+request
+    this.mysqlUrlConnect = "http://0.0.0.0:8080/connect/"+dbms+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+port+"/"
+    +db+"/"+table+"/"+"INSERT"+"/"+request
 
     this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(dataInsert => {
       this.dataInsert = dataInsert
@@ -125,9 +158,10 @@ export class MysqlComponent implements OnInit {
 
      //refresh
      this.connect(this.lastConnexion[0], this.lastConnexion[1], this.lastConnexion[2], 
-    this.lastConnexion[3], this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6])
+    this.lastConnexion[3], this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6], this.lastConnexion[7])
   }
 
+  //Form buildfor update request
   FormUpdate(index){
     this.arrayUpdate = []
     this.updateActivated = 1
@@ -136,6 +170,7 @@ export class MysqlComponent implements OnInit {
     this.GetValueUpdate(index)
   }
 
+  //Get values to fill the update form
   GetValueUpdate(index){
     for(var i=0; i < this.insertTypes.length; i++){
       for(var j=0; j < this.columns.length; j++){
@@ -147,12 +182,14 @@ export class MysqlComponent implements OnInit {
     }
   }
 
-  //UPDATE method
+  //UPDATE method (onclick)
   updateEntry(){
     var db = this.lastConnexion[4]
     var userServer = this.lastConnexion[2]
     var pwServer = this.lastConnexion[3]
     var ipServer = this.lastConnexion[0]
+    var port = this.lastConnexion[1]
+    var dbms = this.lastConnexion[7]
     var id = this.getTableID()
     var table = this.getTableName() 
     var update =""
@@ -162,20 +199,19 @@ export class MysqlComponent implements OnInit {
       }
     }
     for(var i= 1; i < this.insertTypes.length; i++){
-      if((document.getElementById(nameInput) as HTMLInputElement).value==""){
-        this.notifier.notify( 'error', 'You need to fill every input' );
-        return;
-      }
       var nameInput = this.insertTypes[i][0]
       this.arrayDataUpdateInput.push((document.getElementById(nameInput) as HTMLInputElement).value)
       update = update+" "+this.insertTypes[i][0]+" = '"+(document.getElementById(nameInput) as HTMLInputElement).value+"',"
     }
+    
     var idValue = (document.getElementById(id) as HTMLInputElement).value
+    
     update = update.substring(0, update.length - 1)
     var request = "UPDATE "+table+" SET "+update+" WHERE "+id+"="+"'"+idValue+"';" 
+
     console.log(request)
-    this.mysqlUrlConnect = "http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"
-    +this.lastConnexion[4]+"/"+table+"/"+"UPDATE"+"/"+request
+    this.mysqlUrlConnect = "http://0.0.0.0:8080/connect/"+dbms+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+port+"/"
+    +db+"/"+table+"/"+"UPDATE"+"/"+request
 
     this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(dataUpdate => {
       this.dataUpdate = dataUpdate
@@ -184,7 +220,7 @@ export class MysqlComponent implements OnInit {
 
      //refresh
      this.connect(this.lastConnexion[0], this.lastConnexion[1], this.lastConnexion[2], 
-    this.lastConnexion[3], this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6])
+    this.lastConnexion[3], this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6], this.lastConnexion[7])
   } 
 
   //DELETE method
@@ -193,6 +229,9 @@ export class MysqlComponent implements OnInit {
     var userServer = this.lastConnexion[2]
     var pwServer = this.lastConnexion[3]
     var ipServer = this.lastConnexion[0]
+    var portServer = this.lastConnexion[1]
+    var dbName = this.lastConnexion[4]
+    var dbms = this.lastConnexion[7]
     var id = this.getTableID()
     var table = this.getTableName()
     for(var i = 0; i < this.columns.length; i++){
@@ -203,7 +242,16 @@ export class MysqlComponent implements OnInit {
     var idValue = this.arrayParams[index][i]
     var request = "DELETE FROM "+table+" WHERE "+id+"="+"'"+idValue+"'" 
 
-    this.mysqlURLDelete = "http://0.0.0.0:8080/delete/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+request
+    if(dbms == "mysql"){
+      this.mysqlURLDelete = "http://0.0.0.0:8080/delete/"+dbms+"/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+request
+    }
+    else if(dbms == "sqlserver"){
+      this.mysqlURLDelete = "http://0.0.0.0:8080/connect/"+dbms+"/"+userServer+"/"+pwServer+"/"
+      +ipServer+"/"+portServer+"/"+dbName+"/"+table+"/"+"DELETE"+"/"+request
+    }
+    else{
+      this.mysqlURLDelete = "http://0.0.0.0:8080/delete/"+dbms+"/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+request
+    }
 
     this.ConnectMysqlPost(this.mysqlURLDelete).subscribe(dataDelete => {
       this.dataDelete = dataDelete
@@ -212,7 +260,7 @@ export class MysqlComponent implements OnInit {
 
     //refresh
     this.connect(this.lastConnexion[0], this.lastConnexion[1], this.lastConnexion[2], this.lastConnexion[3], 
-      this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6])
+      this.lastConnexion[4], this.lastConnexion[5], this.lastConnexion[6], this.lastConnexion[7])
   }
 
   //REGEX method to get table name in request
@@ -247,22 +295,35 @@ export class MysqlComponent implements OnInit {
     var userServer = this.lastConnexion[2]
     var pwServer = this.lastConnexion[3]
     var ipServer = this.lastConnexion[0]
+    var port = this.lastConnexion[1]
+    var dbms = this.lastConnexion[7]
     var id
 
-    this.mySQLURLGetId = "http://0.0.0.0:8080/getId/"+table+"/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer
+    this.mySQLURLGetId = "http://localhost:8080/getId/"+dbms+"/"+table+"/"+db+"/"+userServer+"/"+pwServer+"/"+ipServer+"/"+port
+
+    console.log(this.mySQLURLGetId)
 
     this.ConnectMysqlPost(this.mySQLURLGetId).subscribe(dataInfo => {
       this.dataInfoTable = dataInfo
     })
-    id = this.loopID(id)
+    console.log("datainfotable ", this.dataInfoTable)
+    id = this.loopID(id, dbms)
+  
     return id;
   }
 
-  loopID(id){
+  //Loop to get the id column
+  loopID(id, dbms){
     for(var i = 0; i < this.dataInfoTable.length; i++){
       for(var key in this.dataInfoTable[i]){
-        if(this.dataInfoTable[i].key=="PRI"){
-          id = this.dataInfoTable[i].field
+        if(dbms == "mysql"){
+          if(this.dataInfoTable[i].key=="PRI"){
+            id = this.dataInfoTable[i].field
+          }
+        }
+        else if(dbms == "sqlserver"){
+          if(this.dataInfoTable[i]["primary key"] == true)
+            id = this.dataInfoTable[i]["column name"]
         }
       }
     }
@@ -270,14 +331,18 @@ export class MysqlComponent implements OnInit {
   }
 
   //Connect and request method for mysql server
-  connect(ipServer, portServer, userServer, pwServer, dbName, type, request){
+  connect(dbms, ipServer, portServer, userServer, pwServer, dbName, type, request){
     this.insertActivated = 0
     this.updateActivated = 0
     this.connected=0
-    this.lastConnexion= [ipServer, portServer, userServer, pwServer, dbName, type, request]
+    this.lastConnexion= [ipServer, portServer, userServer, pwServer, dbName, type, request, dbms]
     var table = this.getTableName()
 
-    this.mysqlUrlConnect="http://0.0.0.0:8080/connect/"+userServer+"/"+pwServer+"/"+ipServer+"/"+dbName+"/"+table+"/"+type+"/"+request
+    this.mysqlUrlConnect="http://localhost:8080/connect/"+dbms+"/"+userServer+"/"+pwServer+"/"
+    +ipServer+"/"+portServer+"/"+dbName+"/"+table+"/"+type+"/"+request
+
+    console.log(this.mysqlUrlConnect);
+
     this.ConnectMysqlPost(this.mysqlUrlConnect).subscribe(datas => {
       this.datas = datas
       this.getData(this.lastConnexion[5])
